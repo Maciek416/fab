@@ -179,6 +179,16 @@ function handle( env ) {
   if ( typeof handler == "function" )
     handler = handler.call( env );
 
+  // Weave the remainder of execution through a callback to allow asynchronous action
+  if ( typeof handler == "function" ) {
+    handler(function(handler){
+      if ( typeof handler == "string" )
+        env.body( handler );
+      env.flush();
+    });
+    return
+  }
+
   if ( typeof handler == "string" )
     env.body( handler );
   
